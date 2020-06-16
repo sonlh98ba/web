@@ -12,6 +12,7 @@ class MY_Controller extends CI_Controller
         switch ($controller) {
             case 'admin': {
                     // xử lý dữ liệu khi truy cập vào admin
+                    $this->load->helper('admin');
                     $this->_check_login();
                     break;
                 }
@@ -23,5 +24,19 @@ class MY_Controller extends CI_Controller
     // Kiểm tra trạng thái login
     private function _check_login()
     {
+        $controller = $this->uri->rsegment('1');
+        $controller = strtolower($controller);
+
+        $login = $this->session->userdata('login');
+
+        // Chưa đăng nhập thì chuyển về trang login
+        if (!$login && $controller != 'login') {
+            redirect(admin_url('login'));
+        }
+
+        // Đã đăng nhập thì không cho vào trang login nữa
+        if ($login && $controller == 'login') {
+            redirect(admin_url('home'));
+        }
     }
 }
